@@ -7,11 +7,19 @@
 class Window {
 private:
 	const std::string title = "Sudoku";
-	const int width = 490;
-	const int height = 490;
-	bool closed = false;
+	bool closed;
 
-	SDL_Window* window;
+	SDL_Window* window = nullptr;
+
+protected:
+	const int width = 500;
+	const int height = 500;
+	SDL_Renderer* renderer = nullptr;
+
+private:
+	bool initSDL();
+	bool createWindow();
+	bool createRenderer();
 
 public:
 	Window();
@@ -20,4 +28,7 @@ public:
 	bool init();
 	bool isClosed();
 	void handleEvents();
+	void clear();
+
+	SDL_Renderer* getRenderer();
 };
