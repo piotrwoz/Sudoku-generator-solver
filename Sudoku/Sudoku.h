@@ -6,6 +6,8 @@
 #define UPPER_SQUARES 0
 #define MIDDLE_SQUARES 1
 #define LOWER_SQUARES 2
+#define FLIP_HORIZONTALLY 1
+#define FLIP_VERTICALLY 2
 
 
 #include <iostream>
@@ -40,9 +42,12 @@ private:
 	void check();
 	void shuffle();
 
-	void swapRows();
-	void swapCols();
+	void swapRandomRows();
+	void swapRows(int rowIndex1, int rowIndex2);
+	void swapRandomCols();
 	void transposeBoard();
+	void flipBoardHorizontally();
+	void flipBoardVertically();
 
 	bool checkNumberNotUsedInRow(int rowIndex, int columnIndex, int number);
 	bool checkNumberNotUsedInColumn(int rowIndex, int columnIndex, int number);

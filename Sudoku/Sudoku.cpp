@@ -80,19 +80,29 @@ void Sudoku::check() {
 }
 
 void Sudoku::shuffle() {
-	const int swapsAmount = 2048;
+	const int swapsAmount = pow(2, 12);
 	for (int i = 0; i < swapsAmount; i++) {
+		// one of three options: flip board horizontally, flip board vertically or don't flip
+		int flipMode = rand() % 3;
+		if (flipMode == FLIP_HORIZONTALLY) {
+			this->flipBoardHorizontally();
+		}
+		else if (flipMode == FLIP_VERTICALLY) {
+			this->flipBoardVertically();
+		}
+		
+		// swap rows or columns
 		int swapMode = rand() % 2;
 		if (swapMode == SWAP_ROWS) {
-			this->swapRows();
+			this->swapRandomRows();
 		}
 		else {
-			this->swapCols();
+			this->swapRandomCols();
 		}
 	}
 }
 
-void Sudoku::swapRows() {
+void Sudoku::swapRandomRows() {
 	int squareRow = rand() % this->squareSize;
 	int rowIndex1, rowIndex2;
 	do {
@@ -109,14 +119,18 @@ void Sudoku::swapRows() {
 		rowIndex2 += 2 * this->squareSize;
 	}
 
+	this->swapRows(rowIndex1, rowIndex2);
+}
+
+void Sudoku::swapRows(int rowIndex1, int rowIndex2) {
 	int* buffer = this->board[rowIndex1];
 	this->board[rowIndex1] = this->board[rowIndex2];
 	this->board[rowIndex2] = buffer;
 }
 
-void Sudoku::swapCols() {
+void Sudoku::swapRandomCols() {
 	transposeBoard();
-	this->swapRows();
+	this->swapRandomRows();
 	transposeBoard();
 }
 
@@ -128,6 +142,24 @@ void Sudoku::transposeBoard() {
 			this->board[i][k] = copy[k][i];
 		}
 	}	
+}
+
+void Sudoku::flipBoardHorizontally() {
+	int i = 0;
+	int k = this->size - 1;
+
+	while (i < this->size / 2) {
+		this->swapRows(i, k);
+
+		i++;
+		k--;
+	}
+}
+
+void Sudoku::flipBoardVertically() {
+	this->transposeBoard();
+	this->flipBoardHorizontally();
+	this->transposeBoard();
 }
 
 bool Sudoku::checkNumberNotUsedInRow(int rowIndex, int columnIndex, int number) {
