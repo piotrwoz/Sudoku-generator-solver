@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Window.h"
+#include "Sudoku.h"
 
 class Grid {
 private:
@@ -18,4 +19,5 @@ public:
 	~Grid();
 
 	void drawGrid();
+	void drawGrid(Sudoku* sudoku);
 };

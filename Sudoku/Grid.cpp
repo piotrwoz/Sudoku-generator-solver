@@ -31,3 +31,8 @@ void Grid::drawGrid() {
 		y += (this->tileSize + this->borderWidth);
 	}
 }
+
+void Grid::drawGrid(Sudoku* sudoku) {
+	int size = sudoku->getSize();
+	int** board = sudoku->getBoard();
+}
