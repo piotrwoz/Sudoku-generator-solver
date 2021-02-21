@@ -8,6 +8,9 @@
 #define LOWER_SQUARES 2
 #define FLIP_HORIZONTALLY 1
 #define FLIP_VERTICALLY 2
+#define EASY_MODE 0
+#define NORMAL_MODE 1
+#define HARD_MODE 2
 
 
 #include <iostream>
@@ -38,7 +41,6 @@ private:
 	void resetBoard();
 	void copyFromOriginalBoard();
 	std::unique_ptr<std::unique_ptr<int[]>[]> createBoardCopy();
-	void generate();
 	void check();
 	void shuffle();
 
@@ -48,17 +50,20 @@ private:
 	void transposeBoard();
 	void flipBoardHorizontally();
 	void flipBoardVertically();
-
 	bool checkNumberNotUsedInRow(int rowIndex, int columnIndex, int number);
 	bool checkNumberNotUsedInColumn(int rowIndex, int columnIndex, int number);
 	bool checkNumberNotUsedInSquare(int rowIndex, int columnIndex, int rowIndexBegin, int columnIndexBegin, int number);
 	bool checkIfSafe(int rowIndex, int columnIndex, int number);
-
+	void removeTiles(int mode);
+	int determineAmountOfTilesToRemove(int mode);
+	void removeTilesFromSquare(int rowIndexBegin, int columnIndexBegin, int toRemoveAmount);
 
 public:
 	Sudoku();
 	~Sudoku();
 
+	void generate(int mode);
+	void solve();
 	void printBoard();
 	int getSize();
 	int** getBoard();

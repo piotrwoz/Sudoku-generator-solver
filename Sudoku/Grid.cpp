@@ -33,7 +33,7 @@ void Grid::drawGrid(std::unique_ptr<Sudoku>& sudoku) {
 
 			std::string number = std::to_string(board[i][k]);
 			Text* text = new Text(this->renderer, fontPath, fontSize, number, black);
-			if (text != nullptr) {
+			if (text != nullptr && number != "0") {
 				text->display(x + this->tileSize / 3, y + this->tileSize / 3);
 			}
 			delete text;

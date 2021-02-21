@@ -5,7 +5,6 @@ Sudoku::Sudoku() {
 
 	this->board = this->allocateBoard();
 	this->resetBoard();
-	this->generate();
 }
 
 Sudoku::~Sudoku() {
@@ -14,7 +13,7 @@ Sudoku::~Sudoku() {
 
 int** Sudoku::allocateBoard() {
 	int** array = new int* [this->size];
-	for(int i = 0; i < this->size; i++) {
+	for (int i = 0; i < this->size; i++) {
 		array[i] = new int[this->size];
 	}
 
@@ -36,12 +35,14 @@ void Sudoku::resetBoard() {
 	}
 }
 
-void Sudoku::generate() {
+void Sudoku::generate(int mode) {
 	this->copyFromOriginalBoard();
 	this->printBoard();
 	this->check();
 	this->shuffle();
 	this->check();
+	this->printBoard();
+	this->removeTiles(mode);
 }
 
 void Sudoku::copyFromOriginalBoard() {
@@ -90,7 +91,7 @@ void Sudoku::shuffle() {
 		else if (flipMode == FLIP_VERTICALLY) {
 			this->flipBoardVertically();
 		}
-		
+
 		// swap rows or columns
 		int swapMode = rand() % 2;
 		if (swapMode == SWAP_ROWS) {
@@ -141,7 +142,7 @@ void Sudoku::transposeBoard() {
 		for (int k = 0; k < this->size; k++) {
 			this->board[i][k] = copy[k][i];
 		}
-	}	
+	}
 }
 
 void Sudoku::flipBoardHorizontally() {
@@ -217,6 +218,53 @@ bool Sudoku::checkIfSafe(int rowIndex, int columnIndex, int number) {
 	else {
 		return false;
 	}
+}
+
+void Sudoku::removeTiles(int mode) {
+	for (int i = 0; i < this->size; i += this->squareSize) {
+		for (int k = 0; k < this->size; k += this->squareSize) {
+			int elementsToRemoveAmount = this->determineAmountOfTilesToRemove(mode);
+			this->removeTilesFromSquare(i, k, elementsToRemoveAmount);
+		}
+	}
+}
+
+int Sudoku::determineAmountOfTilesToRemove(int mode) {
+	int elementsToRemoveAmount;
+	if (mode == EASY_MODE) {
+		// 3 or 4
+		elementsToRemoveAmount = rand() % 2 + 3;
+	}
+	else if (mode == NORMAL_MODE) {
+		// 4, 5 or 6
+		elementsToRemoveAmount = rand() % 3 + 4;
+	}
+	else {
+		// 6 or 7
+		elementsToRemoveAmount = rand() % 2 + 6;
+	}
+
+	return elementsToRemoveAmount;
+}
+
+void Sudoku::removeTilesFromSquare(int rowIndexBegin, int columnIndexBegin, int toRemoveAmount) {
+	int iterator = 0;
+	while(iterator < toRemoveAmount) {
+		int i = rand() % this->squareSize;
+		int k = rand() % this->squareSize;
+
+		if (this->board[i + rowIndexBegin][k + columnIndexBegin] == 0) {
+			continue;
+		}
+
+		this->board[i + rowIndexBegin][k + columnIndexBegin] = 0;
+		iterator++;
+	}
+
+}
+
+void Sudoku::solve() {
+
 }
 
 void Sudoku::printBoard() {
