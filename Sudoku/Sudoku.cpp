@@ -3,15 +3,17 @@
 Sudoku::Sudoku() {
 	srand(time(NULL));
 
-	this->board = this->allocateBoard();
+	this->board = this->allocateArray2D();
+	this->startingTiles = this->allocateArray2D();
 	this->resetBoard();
 }
 
 Sudoku::~Sudoku() {
-	this->deallocateBoard();
+	this->deallocateArray2D(this->board);
+	this->deallocateArray2D(this->startingTiles);
 }
 
-int** Sudoku::allocateBoard() {
+int** Sudoku::allocateArray2D() {
 	int** array = new int* [this->size];
 	for (int i = 0; i < this->size; i++) {
 		array[i] = new int[this->size];
@@ -20,29 +22,30 @@ int** Sudoku::allocateBoard() {
 	return array;
 }
 
-void Sudoku::deallocateBoard() {
+void Sudoku::deallocateArray2D(int** array) {
 	for (int i = 0; i < this->size; i++) {
-		delete[] this->board[i];
+		delete[] array[i];
 	}
-	delete[] this->board;
+	delete[] array;
 }
 
 void Sudoku::resetBoard() {
 	for (int i = 0; i < this->size; i++) {
 		for (int k = 0; k < this->size; k++) {
-			this->board[i][k] = 0;
+			this->board[i][k] = EMPTY_TILE;
 		}
 	}
 }
 
 void Sudoku::generate(int mode) {
 	this->copyFromOriginalBoard();
-	this->printBoard();
-	this->check();
 	this->shuffle();
-	this->check();
+	std::cout << "After shuffle" << std::endl;
 	this->printBoard();
 	this->removeTiles(mode);
+	this->setStartingTiles();
+	std::cout << "After removing some tiles" << std::endl;
+	this->printBoard();
 }
 
 void Sudoku::copyFromOriginalBoard() {
@@ -53,7 +56,7 @@ void Sudoku::copyFromOriginalBoard() {
 	}
 }
 
-std::unique_ptr<std::unique_ptr<int[]>[]> Sudoku::createBoardCopy() {
+std::unique_ptr<std::unique_ptr<int[]>[]> Sudoku::createTmpBoardCopy() {
 
 	std::unique_ptr<std::unique_ptr<int[]>[]> copy = std::make_unique<std::unique_ptr<int[]>[]>(this->size);
 	for (int i = 0; i < this->size; i++) {
@@ -68,16 +71,6 @@ std::unique_ptr<std::unique_ptr<int[]>[]> Sudoku::createBoardCopy() {
 	}
 
 	return copy;
-}
-
-void Sudoku::check() {
-	for (int i = 0; i < this->size; i++) {
-		for (int k = 0; k < this->size; k++) {
-			if (!this->checkIfSafe(i, k, this->board[i][k])) {
-				std::cout << "Problem at [" << i << "][" << k << "] = " << this->board[i][k] << std::endl;
-			}
-		}
-	}
 }
 
 void Sudoku::shuffle() {
@@ -136,7 +129,7 @@ void Sudoku::swapRandomCols() {
 }
 
 void Sudoku::transposeBoard() {
-	std::unique_ptr<std::unique_ptr<int[]>[]> copy = this->createBoardCopy();
+	std::unique_ptr<std::unique_ptr<int[]>[]> copy = this->createTmpBoardCopy();
 
 	for (int i = 0; i < this->size; i++) {
 		for (int k = 0; k < this->size; k++) {
@@ -163,55 +156,13 @@ void Sudoku::flipBoardVertically() {
 	this->transposeBoard();
 }
 
-bool Sudoku::checkNumberNotUsedInRow(int rowIndex, int columnIndex, int number) {
-	for (int i = 0; i < this->size; i++) {
-		if (i == columnIndex) {
-			continue;
-		}
-		if (number == this->board[rowIndex][i]) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool Sudoku::checkNumberNotUsedInColumn(int rowIndex, int columnIndex, int number) {
-	for (int i = 0; i < this->size; i++) {
-		if (i == rowIndex) {
-			continue;
-		}
-		if (number == this->board[i][columnIndex]) {
-			return false;
-		}
-	}
-
-	return true;
-}
-
-bool Sudoku::checkNumberNotUsedInSquare(int rowIndex, int columnIndex, int rowIndexBegin, int columnIndexBegin, int number) {
-	for (int i = 0; i < this->squareSize; i++) {
-		for (int k = 0; k < this->squareSize; k++) {
-			if (i == rowIndex && k == columnIndex) {
-				continue;
-			}
-
-			if (number == this->board[rowIndexBegin + i][columnIndexBegin + k] && number != this->board[rowIndex][columnIndex]) {
-				return false;
-			}
-		}
-	}
-
-	return true;
-}
-
-bool Sudoku::checkIfSafe(int rowIndex, int columnIndex, int number) {
+bool Sudoku::checkIfSafe(int** grid, int rowIndex, int columnIndex, int number) {
 	int squareIndexRowBegin = rowIndex - rowIndex % this->squareSize;
 	int squareIndexColumnBegin = columnIndex - columnIndex % this->squareSize;
 
-	if (this->checkNumberNotUsedInRow(rowIndex, columnIndex, number) &&
-		this->checkNumberNotUsedInColumn(rowIndex, columnIndex, number) &&
-		this->checkNumberNotUsedInSquare(rowIndex, columnIndex, squareIndexRowBegin, squareIndexColumnBegin, number)) {
+	if (this->checkNumberNotUsedInRow(grid, rowIndex, columnIndex, number) &&
+		this->checkNumberNotUsedInColumn(grid, rowIndex, columnIndex, number) &&
+		this->checkNumberNotUsedInSquare(grid, rowIndex, columnIndex, squareIndexRowBegin, squareIndexColumnBegin, number)) {
 
 		return true;
 	}
@@ -220,11 +171,56 @@ bool Sudoku::checkIfSafe(int rowIndex, int columnIndex, int number) {
 	}
 }
 
+bool Sudoku::checkNumberNotUsedInRow(int** grid, int rowIndex, int columnIndex, int number) {
+	for (int i = 0; i < this->size; i++) {
+		if (number == grid[rowIndex][i]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Sudoku::checkNumberNotUsedInColumn(int** grid, int rowIndex, int columnIndex, int number) {
+	for (int i = 0; i < this->size; i++) {
+		if (number == grid[i][columnIndex]) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Sudoku::checkNumberNotUsedInSquare(int** grid, int rowIndex, int columnIndex, int rowIndexBegin, int columnIndexBegin, int number) {
+	for (int i = 0; i < this->squareSize; i++) {
+		for (int k = 0; k < this->squareSize; k++) {
+			if (number == grid[rowIndexBegin + i][columnIndexBegin + k] && number != grid[rowIndex][columnIndex]) {
+				return false;
+			}
+		}
+	}
+
+	return true;
+}
+
 void Sudoku::removeTiles(int mode) {
 	for (int i = 0; i < this->size; i += this->squareSize) {
 		for (int k = 0; k < this->size; k += this->squareSize) {
 			int elementsToRemoveAmount = this->determineAmountOfTilesToRemove(mode);
 			this->removeTilesFromSquare(i, k, elementsToRemoveAmount);
+		}
+	}
+}
+
+void Sudoku::setStartingTiles() {
+	for (int i = 0; i < this->size; i++) {
+		for (int k = 0; k < this->size; k++) {
+			if (this->board[i][k] != EMPTY_TILE) {
+				this->startingTiles[i][k] = STARTING_NON_EMPTY_TILE;
+			}
+			else {
+				this->startingTiles[i][k] = STARTING_EMPTY_TILE;
+			}
 		}
 	}
 }
@@ -253,18 +249,59 @@ void Sudoku::removeTilesFromSquare(int rowIndexBegin, int columnIndexBegin, int 
 		int i = rand() % this->squareSize;
 		int k = rand() % this->squareSize;
 
-		if (this->board[i + rowIndexBegin][k + columnIndexBegin] == 0) {
+		if (this->board[i + rowIndexBegin][k + columnIndexBegin] == EMPTY_TILE) {
 			continue;
 		}
 
-		this->board[i + rowIndexBegin][k + columnIndexBegin] = 0;
+		this->board[i + rowIndexBegin][k + columnIndexBegin] = EMPTY_TILE;
 		iterator++;
 	}
 
 }
 
 void Sudoku::solve() {
+	if (!this->backtracking(this->board)) {
+		std::cout << "There is no solution for this sudoku" << std::endl;
+	}
+	else {
+		std::cout << "SOLUTION" << std::endl;
+		this->printBoard();
+	}
+}
 
+bool Sudoku::backtracking(int** grid) {
+	int rowIndex, columnIndex;
+
+	if (!this->findNextEmptyTile(grid, rowIndex, columnIndex)) {
+		// there is no empty tiles, so there is a solution of sudoku
+		return true;
+	}
+
+	for (int number = 1; number <= this->size; number++) {
+		if (this->checkIfSafe(grid, rowIndex, columnIndex, number)) {
+			grid[rowIndex][columnIndex] = number;
+
+			if (this->backtracking(grid)) {
+				return true;
+			}
+
+			grid[rowIndex][columnIndex] = EMPTY_TILE;
+		}
+	}
+
+	return false;
+}
+
+bool Sudoku::findNextEmptyTile(int** grid, int& rowIndex, int& columnIndex) {
+	for (rowIndex = 0; rowIndex < this->size; rowIndex++) {
+		for (columnIndex = 0; columnIndex < this->size; columnIndex++) {
+			if (grid[rowIndex][columnIndex] == EMPTY_TILE) {
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void Sudoku::printBoard() {
@@ -283,7 +320,7 @@ void Sudoku::printBoard() {
 
 		std::cout << std::endl;
 	}
-	std::cout << std::endl << std::endl << std::endl;
+	std::cout << std::endl << std::endl;
 }
 
 int Sudoku::getSize() {
@@ -292,4 +329,8 @@ int Sudoku::getSize() {
 
 int** Sudoku::getBoard() {
 	return this->board;
+}
+
+int** Sudoku::getStartingTiles() {
+	return this->startingTiles;
 }

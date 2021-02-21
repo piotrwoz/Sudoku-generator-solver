@@ -15,6 +15,8 @@ private:
 	const int blue = 255;
 	const int alpha = 255;
 
+	void setText(std::unique_ptr<Sudoku>& sudoku, int rowIndex, int columnIndex, int x, int y);
+
 public:
 	Grid(SDL_Renderer* _renderer);
 	~Grid();

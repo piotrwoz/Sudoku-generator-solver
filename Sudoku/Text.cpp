@@ -1,6 +1,6 @@
 #include "Text.h"
 
-Text::Text(SDL_Renderer* _renderer, const std::string& _fontPath, int _fontSize, const std::string& _message, const SDL_Color& _color) {
+Text::Text(SDL_Renderer* _renderer, const std::string& _fontPath, const int _fontSize, const std::string& _message, const SDL_Color& _color) {
 	this->renderer = _renderer;
 	this->textTexture = this->loadFont(_fontPath, _fontSize, _message, _color);
 	SDL_QueryTexture(this->textTexture, nullptr, nullptr, &this->textRect.w, &this->textRect.h);
@@ -10,7 +10,7 @@ Text::~Text() {
 
 }
 
-SDL_Texture* Text::loadFont(const std::string& fontPath, int fontSize, const std::string& message, const SDL_Color& color ) {
+SDL_Texture* Text::loadFont(const std::string& fontPath, const int fontSize, const std::string& message, const SDL_Color& color ) {
 	auto font = TTF_OpenFont(fontPath.c_str(), fontSize);
 	if (!font) {
 		std::cout << "Failed to load font" << std::endl;

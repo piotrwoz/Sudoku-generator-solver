@@ -11,6 +11,9 @@
 #define EASY_MODE 0
 #define NORMAL_MODE 1
 #define HARD_MODE 2
+#define EMPTY_TILE 0
+#define STARTING_EMPTY_TILE 0
+#define STARTING_NON_EMPTY_TILE 1
 
 
 #include <iostream>
@@ -34,13 +37,13 @@ private:
 		2,3,9,8,4,1,5,6,7
 	};
 	int** board = nullptr;
+	int** startingTiles = nullptr;
 
-	void createSetOfAllPossibleNumbers();
-	int** allocateBoard();
-	void deallocateBoard();
+	int** allocateArray2D();
+	void deallocateArray2D(int** arr);
 	void resetBoard();
 	void copyFromOriginalBoard();
-	std::unique_ptr<std::unique_ptr<int[]>[]> createBoardCopy();
+	std::unique_ptr<std::unique_ptr<int[]>[]> createTmpBoardCopy();
 	void check();
 	void shuffle();
 
@@ -50,13 +53,16 @@ private:
 	void transposeBoard();
 	void flipBoardHorizontally();
 	void flipBoardVertically();
-	bool checkNumberNotUsedInRow(int rowIndex, int columnIndex, int number);
-	bool checkNumberNotUsedInColumn(int rowIndex, int columnIndex, int number);
-	bool checkNumberNotUsedInSquare(int rowIndex, int columnIndex, int rowIndexBegin, int columnIndexBegin, int number);
-	bool checkIfSafe(int rowIndex, int columnIndex, int number);
+	bool checkNumberNotUsedInRow(int** grid, int rowIndex, int columnIndex, int number);
+	bool checkNumberNotUsedInColumn(int** grid, int rowIndex, int columnIndex, int number);
+	bool checkNumberNotUsedInSquare(int** grid, int rowIndex, int columnIndex, int rowIndexBegin, int columnIndexBegin, int number);
+	bool checkIfSafe(int** grid, int rowIndex, int columnIndex, int number);
 	void removeTiles(int mode);
+	void setStartingTiles();
 	int determineAmountOfTilesToRemove(int mode);
 	void removeTilesFromSquare(int rowIndexBegin, int columnIndexBegin, int toRemoveAmount);
+	bool backtracking(int** grid);
+	bool findNextEmptyTile(int** grid, int& rowIndex, int& columnIndex);
 
 public:
 	Sudoku();
@@ -67,4 +73,5 @@ public:
 	void printBoard();
 	int getSize();
 	int** getBoard();
+	int** getStartingTiles();
 };

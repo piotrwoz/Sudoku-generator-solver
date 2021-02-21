@@ -8,7 +8,7 @@ int main(int argc, char** args) {
 	std::unique_ptr<Grid> grid(new Grid(window->getRenderer()));
 	std::unique_ptr<Sudoku> sudoku = std::make_unique<Sudoku>();
 	sudoku->generate(NORMAL_MODE);
-	sudoku->printBoard();
+	sudoku->solve();
 
 	grid->drawGrid(sudoku);
 	window->clear();
