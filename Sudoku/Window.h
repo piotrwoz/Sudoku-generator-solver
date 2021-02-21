@@ -5,6 +5,7 @@
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "Text.h"
+#include "Sudoku.h"
 
 class Window {
 private:
@@ -15,7 +16,7 @@ private:
 
 protected:
 	const int width = 500;
-	const int height = 500;
+	const int height = 600;
 	SDL_Renderer* renderer = nullptr;
 
 private:
@@ -30,8 +31,10 @@ public:
 
 	bool init();
 	bool isClosed();
-	void handleEvents();
+	void handleEvents(std::unique_ptr<Sudoku>& sudoku);
 	void clear();
 
 	SDL_Renderer* getRenderer();
+	int getWidth();
+	int getHeight();
 };

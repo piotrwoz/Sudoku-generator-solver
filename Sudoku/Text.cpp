@@ -11,13 +11,13 @@ Text::~Text() {
 }
 
 SDL_Texture* Text::loadFont(const std::string& fontPath, const int fontSize, const std::string& message, const SDL_Color& color ) {
-	auto font = TTF_OpenFont(fontPath.c_str(), fontSize);
-	if (!font) {
+	this->font = TTF_OpenFont(fontPath.c_str(), fontSize);
+	if (!this->font) {
 		std::cout << "Failed to load font" << std::endl;
 		return nullptr;
 	}
 
-	auto textSurface = TTF_RenderText_Solid(font, message.c_str(), color);
+	auto textSurface = TTF_RenderText_Solid(this->font, message.c_str(), color);
 	if (!textSurface) {
 		std::cout << "Failed to create text surface" << std::endl;
 		return nullptr;
@@ -40,6 +40,6 @@ void Text::display(int _x, int _y) {
 	SDL_RenderCopy(this->renderer, this->textTexture, nullptr, &this->textRect);
 }
 
-void Text::changeText(std::string& newText) {
-	this->message = newText;
+TTF_Font* Text::getFont() {
+	return this->font;
 }

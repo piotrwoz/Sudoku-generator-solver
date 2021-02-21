@@ -264,6 +264,7 @@ void Sudoku::solve() {
 		std::cout << "There is no solution for this sudoku" << std::endl;
 	}
 	else {
+		this->solved = true;
 		std::cout << "SOLUTION" << std::endl;
 		this->printBoard();
 	}
@@ -333,4 +334,8 @@ int** Sudoku::getBoard() {
 
 int** Sudoku::getStartingTiles() {
 	return this->startingTiles;
+}
+
+bool Sudoku::isSolved() {
+	return this->solved;
 }

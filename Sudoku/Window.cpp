@@ -62,7 +62,7 @@ bool Window::isClosed() {
 	return this->closed;
 }
 
-void Window::handleEvents() {
+void Window::handleEvents(std::unique_ptr<Sudoku>& sudoku) {
 	SDL_Event event;
 	if (SDL_PollEvent(&event)) {
 
@@ -76,6 +76,12 @@ void Window::handleEvents() {
 				switch (event.key.keysym.sym) {
 					case SDLK_ESCAPE: {
 						this->closed = true;
+					}
+					case SDLK_SPACE: {
+						if (!sudoku->isSolved()) {
+							sudoku->solve();
+						}
+						break;
 					}
 					default: {
 						break;
@@ -111,4 +117,12 @@ void Window::clear() {
 
 SDL_Renderer* Window::getRenderer() {
 	return this->renderer;
+}
+
+int Window::getWidth() {
+	return this->width;
+}
+
+int Window::getHeight() {
+	return this->height;
 }

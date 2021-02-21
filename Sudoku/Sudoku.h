@@ -38,13 +38,13 @@ private:
 	};
 	int** board = nullptr;
 	int** startingTiles = nullptr;
+	bool solved = false;
 
 	int** allocateArray2D();
 	void deallocateArray2D(int** arr);
 	void resetBoard();
 	void copyFromOriginalBoard();
 	std::unique_ptr<std::unique_ptr<int[]>[]> createTmpBoardCopy();
-	void check();
 	void shuffle();
 
 	void swapRandomRows();
@@ -74,4 +74,5 @@ public:
 	int getSize();
 	int** getBoard();
 	int** getStartingTiles();
+	bool isSolved();
 };

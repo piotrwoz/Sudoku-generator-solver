@@ -8,9 +8,22 @@ Grid::~Grid() {
 	
 }
 
-void Grid::drawGrid(std::unique_ptr<Sudoku>& sudoku) {
-	int size = sudoku->getSize();
+bool Grid::canDraw(std::unique_ptr<Sudoku>& sudoku) {
+	if (!sudoku->isSolved() && !this->drawStartingGrid) {
+		this->drawStartingGrid = true;
+		return true;
+	}
+	else if (sudoku->isSolved() && !this->drawSolvedGrid) {
+		this->drawSolvedGrid = true;
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 
+void Grid::drawGrid(std::unique_ptr<Sudoku>& sudoku, std::unique_ptr<Window>& window) {
+	int size = sudoku->getSize();
 	int x = this->borderWidth;
 	int y = this->borderWidth;
 
@@ -34,6 +47,8 @@ void Grid::drawGrid(std::unique_ptr<Sudoku>& sudoku) {
 		x = this->borderWidth;
 		y += (this->tileSize + this->borderWidth);
 	}
+
+	this->drawControls(window);
 }
 
 void Grid::setText(std::unique_ptr<Sudoku>& sudoku, int rowIndex, int columnIndex, int x, int y) {
@@ -46,22 +61,39 @@ void Grid::setText(std::unique_ptr<Sudoku>& sudoku, int rowIndex, int columnInde
 	SDL_Color red = { 255,0,0,0 };
 
 	std::string number = std::to_string(board[rowIndex][columnIndex]);
-	if (startingTiles[rowIndex][columnIndex] == STARTING_NON_EMPTY_TILE) {
-		Text* text = new Text(this->renderer, fontPath, fontSize, number, black);
-
-		if (text != nullptr) {
-			text->display(x + this->tileSize / 3, y + this->tileSize / 3);
-		}
-
-		delete text;
+	if (startingTiles[rowIndex][columnIndex] == STARTING_NON_EMPTY_TILE && number != "0") {
+		std::unique_ptr<Text> text(new Text(this->renderer, fontPath, fontSize, number, black));
+		text->display(x + this->tileSize / 3, y + this->tileSize / 3);
 	}
-	else if (startingTiles[rowIndex][columnIndex] == STARTING_EMPTY_TILE) {
-		Text* text = new Text(this->renderer, fontPath, fontSize, number, red);
-
-		if (text != nullptr) {
-			text->display(x + this->tileSize / 3, y + this->tileSize / 3);
-		}
-
-		delete text;
+	else if (startingTiles[rowIndex][columnIndex] == STARTING_EMPTY_TILE && number != "0") {
+		std::unique_ptr<Text> text(new Text(this->renderer, fontPath, fontSize, number, red));
+		text->display(x + this->tileSize / 3, y + this->tileSize / 3);
 	}
+}
+
+void Grid::drawControls(std::unique_ptr<Window>& window) {
+	std::string message = "PRESS 'SPACE' TO SOLVE";
+	std::string fontPath = "fonts/arialbd.ttf";
+	const int fontSize = 32;
+	SDL_Color white = { 255,255,255,0 };
+
+	std::unique_ptr<Text> text(new Text(this->renderer, fontPath, fontSize, message, white));
+	if (text != nullptr) {
+		int width = 0; 
+		int height = 0;
+		int textSize = TTF_SizeText(text->getFont(), message.c_str(), &width, &height);
+
+		int x = window->getWidth() / 2 - width / 2;
+		int y = window->getHeight() - height * 2;
+
+		text->display(x, y);
+	}
+}
+
+bool Grid::isDrawStartingGrid() {
+	return this->drawStartingGrid;
+}
+
+bool Grid::isDrawSolvedGrid() {
+	return this->drawSolvedGrid;
 }
