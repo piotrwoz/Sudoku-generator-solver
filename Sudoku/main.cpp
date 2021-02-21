@@ -10,10 +10,11 @@ int main(int argc, char** args) {
 	std::unique_ptr<Sudoku> sudoku = std::make_unique<Sudoku>();
 	sudoku->printBoard();
 
+	board->drawGrid(sudoku);
+	window->clear();
+
 	while (!window->isClosed()) {
-		board->drawGrid();
 		window->handleEvents();
-		window->clear();
 	}
 
 	return 0;

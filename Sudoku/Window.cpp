@@ -7,6 +7,7 @@ Window::Window() {
 Window::~Window() {
 	SDL_DestroyWindow(this->window);
 	SDL_DestroyRenderer(this->renderer);
+	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -14,6 +15,15 @@ bool Window::initSDL() {
 	// SDL_Init returns 0 if initialization succeed
 	if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
 		std::cout << "There was a problem with SDL initialization" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+bool Window::initFonts() {
+	if (TTF_Init() == -1) {
+		std::cout << "There was a problem with fonts initialization" << std::endl;
 		return false;
 	}
 
@@ -41,7 +51,7 @@ bool Window::createRenderer() {
 }
 
 bool Window::init() {
-	if (!this->initSDL() || !this->createWindow() || !this->createRenderer()) {
+	if (!this->initSDL() || !this->initFonts() || !this->createWindow() || !this->createRenderer()) {
 		return false;
 	}
 	

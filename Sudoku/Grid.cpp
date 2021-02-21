@@ -8,7 +8,14 @@ Grid::~Grid() {
 	
 }
 
-void Grid::drawGrid() {
+void Grid::drawGrid(std::unique_ptr<Sudoku>& sudoku) {
+	int size = sudoku->getSize();
+	int** board = sudoku->getBoard();
+
+	std::string fontPath = "fonts/arialbd.ttf";
+	int fontSize = 20;
+	SDL_Color black = { 0,0,0,0 };
+
 	int x = this->borderWidth;
 	int y = this->borderWidth;
 
@@ -24,15 +31,17 @@ void Grid::drawGrid() {
 			SDL_SetRenderDrawColor(this->renderer, this->red, this->green, this->blue, this->alpha);
 			SDL_RenderFillRect(this->renderer, &rect);
 
+			std::string number = std::to_string(board[i][k]);
+			Text* text = new Text(this->renderer, fontPath, fontSize, number, black);
+			if (text != nullptr) {
+				text->display(x + this->tileSize / 3, y + this->tileSize / 3);
+			}
+			delete text;
+
 			x += (this->tileSize + this->borderWidth);
 		}
 
 		x = this->borderWidth;
 		y += (this->tileSize + this->borderWidth);
 	}
-}
-
-void Grid::drawGrid(Sudoku* sudoku) {
-	int size = sudoku->getSize();
-	int** board = sudoku->getBoard();
 }

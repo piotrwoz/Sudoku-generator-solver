@@ -3,6 +3,8 @@
 #include <iostream>
 #include <string>
 #include <SDL.h>
+#include <SDL_ttf.h>
+#include "Text.h"
 
 class Window {
 private:
@@ -18,6 +20,7 @@ protected:
 
 private:
 	bool initSDL();
+	bool initFonts();
 	bool createWindow();
 	bool createRenderer();
 

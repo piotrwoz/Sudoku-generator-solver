@@ -2,6 +2,7 @@
 
 #include "Window.h"
 #include "Sudoku.h"
+#include "Text.h"
 
 class Grid {
 private:
@@ -18,6 +19,5 @@ public:
 	Grid(SDL_Renderer* _renderer);
 	~Grid();
 
-	void drawGrid();
-	void drawGrid(Sudoku* sudoku);
+	void drawGrid(std::unique_ptr<Sudoku>& sudoku);
 };
