@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <string>
+#include <memory>
 #include <SDL.h>
 #include <SDL_ttf.h>
 #include "Text.h"
@@ -11,6 +12,7 @@ class Window {
 private:
 	const std::string title = "Sudoku";
 	bool closed;
+	std::pair<int, int> mouseClickCoords;
 
 	SDL_Window* window = nullptr;
 

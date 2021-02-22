@@ -2,6 +2,8 @@
 
 Window::Window() {
 	this->closed = !this->init();
+	this->mouseClickCoords.first = -1;
+	this->mouseClickCoords.second = -1;
 }
 
 Window::~Window() {
@@ -87,14 +89,6 @@ void Window::handleEvents(std::unique_ptr<Sudoku>& sudoku) {
 						break;
 					}
 				}
-			}
-				
-			case SDL_MOUSEBUTTONUP: {
-				int x, y;
-				SDL_GetMouseState(&x, &y);
-				std::cout << "x = " << x << " | y = " << y << std::endl;
-				
-				break;
 			}
 
 			default: {

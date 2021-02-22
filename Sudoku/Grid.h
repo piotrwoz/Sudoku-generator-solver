@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Window.h"
-#include "Sudoku.h"
 #include "Text.h"
 
 class Grid {

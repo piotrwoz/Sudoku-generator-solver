@@ -1,11 +1,11 @@
 #include "Grid.h"
 
-Grid::Grid(SDL_Renderer* _renderer){
+Grid::Grid(SDL_Renderer* _renderer) {
 	this->renderer = _renderer;
 }
 
 Grid::~Grid() {
-	
+
 }
 
 bool Grid::canDraw(std::unique_ptr<Sudoku>& sudoku) {
@@ -40,7 +40,7 @@ void Grid::drawGrid(std::unique_ptr<Sudoku>& sudoku, std::unique_ptr<Window>& wi
 			SDL_RenderFillRect(this->renderer, &rect);
 
 			this->setText(sudoku, i, k, x, y);
-			
+
 			x += (this->tileSize + this->borderWidth);
 		}
 
@@ -78,16 +78,14 @@ void Grid::drawControls(std::unique_ptr<Window>& window) {
 	SDL_Color white = { 255,255,255,0 };
 
 	std::unique_ptr<Text> text(new Text(this->renderer, fontPath, fontSize, message, white));
-	if (text != nullptr) {
-		int width = 0; 
-		int height = 0;
-		int textSize = TTF_SizeText(text->getFont(), message.c_str(), &width, &height);
+	int width = 0;
+	int height = 0;
+	int textSize = TTF_SizeText(text->getFont(), message.c_str(), &width, &height);
 
-		int x = window->getWidth() / 2 - width / 2;
-		int y = window->getHeight() - height * 2;
+	int x = window->getWidth() / 2 - width / 2;
+	int y = window->getHeight() - height * 2;
 
-		text->display(x, y);
-	}
+	text->display(x, y);
 }
 
 bool Grid::isDrawStartingGrid() {

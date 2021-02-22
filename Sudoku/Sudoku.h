@@ -8,13 +8,9 @@
 #define LOWER_SQUARES 2
 #define FLIP_HORIZONTALLY 1
 #define FLIP_VERTICALLY 2
-#define EASY_MODE 0
-#define NORMAL_MODE 1
-#define HARD_MODE 2
 #define EMPTY_TILE 0
 #define STARTING_EMPTY_TILE 0
 #define STARTING_NON_EMPTY_TILE 1
-
 
 #include <iostream>
 #include <time.h>
@@ -41,7 +37,7 @@ private:
 	bool solved = false;
 
 	int** allocateArray2D();
-	void deallocateArray2D(int** arr);
+	void deallocateArray2D(int** array);
 	void resetBoard();
 	void copyFromOriginalBoard();
 	std::unique_ptr<std::unique_ptr<int[]>[]> createTmpBoardCopy();
@@ -57,9 +53,9 @@ private:
 	bool checkNumberNotUsedInColumn(int** grid, int rowIndex, int columnIndex, int number);
 	bool checkNumberNotUsedInSquare(int** grid, int rowIndex, int columnIndex, int rowIndexBegin, int columnIndexBegin, int number);
 	bool checkIfSafe(int** grid, int rowIndex, int columnIndex, int number);
-	void removeTiles(int mode);
+	void removeTiles();
 	void setStartingTiles();
-	int determineAmountOfTilesToRemove(int mode);
+	int determineAmountOfTilesToRemove();
 	void removeTilesFromSquare(int rowIndexBegin, int columnIndexBegin, int toRemoveAmount);
 	bool backtracking(int** grid);
 	bool findNextEmptyTile(int** grid, int& rowIndex, int& columnIndex);
@@ -68,9 +64,8 @@ public:
 	Sudoku();
 	~Sudoku();
 
-	void generate(int mode);
+	void generate();
 	void solve();
-	void printBoard();
 	int getSize();
 	int** getBoard();
 	int** getStartingTiles();
