@@ -48,7 +48,7 @@ void Grid::drawGrid(std::unique_ptr<Sudoku>& sudoku, std::unique_ptr<Window>& wi
 		y += (this->tileSize + this->borderWidth);
 	}
 
-	this->drawControls(window);
+	this->drawControls(sudoku, window);
 }
 
 void Grid::setText(std::unique_ptr<Sudoku>& sudoku, int rowIndex, int columnIndex, int x, int y) {
@@ -71,8 +71,14 @@ void Grid::setText(std::unique_ptr<Sudoku>& sudoku, int rowIndex, int columnInde
 	}
 }
 
-void Grid::drawControls(std::unique_ptr<Window>& window) {
-	std::string message = "PRESS 'SPACE' TO SOLVE";
+void Grid::drawControls(std::unique_ptr<Sudoku>& sudoku, std::unique_ptr<Window>& window) {
+	std::string message;
+	if (sudoku->isSolved()) {
+		message = "SUDOKU HAS BEEN SOLVED";
+	}
+	else {
+		message = "PRESS 'SPACE' TO SOLVE";
+	}
 	std::string fontPath = "fonts/arialbd.ttf";
 	const int fontSize = 32;
 	SDL_Color white = { 255,255,255,0 };

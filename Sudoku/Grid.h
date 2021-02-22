@@ -23,7 +23,7 @@ public:
 
 	bool canDraw(std::unique_ptr<Sudoku>& sudoku);
 	void drawGrid(std::unique_ptr<Sudoku>& sudoku, std::unique_ptr<Window>& window);
-	void drawControls(std::unique_ptr<Window>& window);
+	void drawControls(std::unique_ptr<Sudoku>& sudoku, std::unique_ptr<Window>& window);
 	bool isDrawStartingGrid();
 	bool isDrawSolvedGrid();
 };
